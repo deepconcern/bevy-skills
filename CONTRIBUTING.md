@@ -33,6 +33,13 @@ deprecated it, and the replacement. Before adding a row, confirm the old form is
 `#[deprecated]` in the targeted source, and that the replacement exists there. Add a `rust,check`
 example when the replacement isn't obvious.
 
+To pin down the "Since" release, read that release's migration guide (bevy-website
+`release-content/<ver>/migration-guides/` for 0.14 to 0.16, `content/learn/migration-guides/` for
+later ones). When the guide doesn't mention it, diff the published sources of two releases. For
+example, `curl -sSfL https://static.crates.io/crates/bevy_ecs/bevy_ecs-0.18.0.crate | tar xz`,
+then grep the same symbol in both versions. Names sometimes come back (run conditions went
+`and_then` → `and` → `and_then`), so always check the targeted version as well.
+
 ## Outdated sources
 
 `references/<minor>/outdated-sources.md` is both documentation and data. The plugin's web hook reads

@@ -1,6 +1,6 @@
 {
   "name": "bevy",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Version-aware skill for the Bevy game engine: stale-API list, current idioms and migration notes for the Bevy version in Cargo.lock, plus hooks that flag version mismatches and outdated web sources.",
   "author": {
     "name": "deepconcern"
