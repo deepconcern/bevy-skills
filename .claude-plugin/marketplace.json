@@ -5,16 +5,20 @@
   },
   "metadata": {
     "description": "Unofficial, version-aware AI skills for the Bevy game engine and its ecosystem. Not affiliated with the Bevy project.",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "plugins": [
     {
       "name": "bevy",
       "source": "./plugins/bevy",
       "description": "Bevy engine skill (targets Bevy 0.20): stale APIs, idioms, migration notes, version-mismatch and outdated-source hooks.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "category": "development",
-      "keywords": ["bevy", "rust", "gamedev"]
+      "keywords": [
+        "bevy",
+        "rust",
+        "gamedev"
+      ]
     }
   ]
 }

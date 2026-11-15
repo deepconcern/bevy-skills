@@ -3,7 +3,7 @@ name: bevy
 description: Use when writing, reviewing, debugging or upgrading Rust code that uses the Bevy game engine (ECS, systems, observers, BSN scenes, UI, assets, rendering, states). Loads the stale-API list and current idioms for the Bevy version in Cargo.lock.
 license: MIT OR Apache-2.0
 metadata:
-  skill-version: "0.1.0"
+  skill-version: "0.2.0"
   target-crate: "bevy"
   target-version: "0.20"
   supported-versions: "0.20"
