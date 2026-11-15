@@ -1,0 +1,20 @@
+[package]
+name = "checks-bevy-0-20"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "MIT OR Apache-2.0"
+
+# Markdown files whose ```rust,check blocks are compiled against this crate's dependencies.
+# Paths are relative to the repository root.
+[package.metadata.snippets]
+sources = [
+    "plugins/bevy/skills/bevy/references/0.20/*.md",
+    "plugins/bevy/skills/bevy/migrations/*-to-0.20.md",
+]
+
+[dependencies]
+# Pinned to the exact patch the skill was verified against. Audio is left out to keep CI light.
+bevy = { version = "=0.20.1", default-features = false, features = ["2d", "3d", "ui"] }
+
+[workspace]

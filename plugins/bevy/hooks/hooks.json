@@ -1,0 +1,28 @@
+{
+  "description": "bevy-skills: warn when Cargo.lock's Bevy version isn't covered by the installed skill, and when a fetched web page is a known outdated or mismatched Bevy source.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/check-lock.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "WebFetch|WebSearch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/warn-outdated-source.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
