@@ -1,0 +1,37 @@
+# Recommended clippy.toml for a game on Bevy 0.20, from the bevy-skills plugin.
+# Copy it to the game's workspace root. Run it in CI as:
+#   cargo clippy --all-targets -- -D deprecated -D warnings
+#
+# Removed Bevy APIs already fail to compile, and deprecated ones fail under `-D deprecated`.
+# This file catches the rest: patterns that compile fine but aren't what Bevy 0.20 code should use.
+#
+# Pair it with these Cargo.toml lints. Bevy systems routinely trip the first two:
+#   [lints.clippy]
+#   type_complexity = "allow"
+#   too_many_arguments = "allow"
+#   nonstandard_macro_braces = "warn"
+#   [lints.rust]
+#   deprecated = "deny"
+
+# Write `children![..]`, `related![..]`, not `children!(..)` (matches Bevy's own config).
+standard-macro-braces = [
+  { name = "children", brace = "[" },
+  { name = "related", brace = "[" },
+]
+
+disallowed-types = [
+  { path = "std::collections::HashMap", reason = "use bevy::platform::collections::HashMap (faster hasher, no_std/wasm friendly)" },
+  { path = "std::collections::HashSet", reason = "use bevy::platform::collections::HashSet" },
+  { path = "std::time::Instant", reason = "use bevy::platform::time::Instant (works on wasm), or Res<Time> inside systems" },
+]
+
+# Optional: cross-platform float determinism (lockstep multiplayer, replays). Bevy uses this for itself.
+# Uncomment if the game needs bit-identical results across Linux and Windows.
+# disallowed-methods = [
+#   { path = "f32::powf", reason = "use bevy::math::ops::powf for libm determinism" },
+#   { path = "f32::sin", reason = "use bevy::math::ops::sin for libm determinism" },
+#   { path = "f32::cos", reason = "use bevy::math::ops::cos for libm determinism" },
+#   { path = "f32::atan2", reason = "use bevy::math::ops::atan2 for libm determinism" },
+#   { path = "f32::exp", reason = "use bevy::math::ops::exp for libm determinism" },
+#   { path = "f32::ln", reason = "use bevy::math::ops::ln for libm determinism" },
+# ]

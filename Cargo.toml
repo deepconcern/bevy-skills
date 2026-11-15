@@ -1,0 +1,5 @@
+[workspace]
+resolver = "3"
+members = ["xtask"]
+# Each checks/<name> crate is its own workspace so building xtask never compiles Bevy.
+exclude = ["checks"]

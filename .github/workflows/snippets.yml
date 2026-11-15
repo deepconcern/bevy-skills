@@ -1,0 +1,60 @@
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  snippets:
+    name: Compile skill snippets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Bevy 0.20 needs rustc 1.97.1+. Keep this in step with the newest checks/ crate.
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.97.1"
+
+      - name: Install Bevy's Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends pkg-config libudev-dev libwayland-dev libxkbcommon-dev
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            .
+            checks/bevy-0.20
+
+      - name: Check snippets (deprecated APIs are errors)
+        run: cargo xtask check-snippets
+
+  hooks:
+    name: Hook scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run hook tests
+        run: bash tests/hooks.sh
+      - name: ShellCheck
+        run: shellcheck plugins/*/scripts/*.sh scripts/*.sh tests/*.sh
+
+  manifests:
+    name: Plugin manifests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JSON
+        run: |
+          for f in .claude-plugin/marketplace.json plugins/*/.claude-plugin/plugin.json plugins/*/hooks/hooks.json; do
+            jq empty "$f" && echo "ok $f"
+          done

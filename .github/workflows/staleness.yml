@@ -1,0 +1,46 @@
+name: Staleness
+
+on:
+  schedule:
+    - cron: "17 6 * * 1" # Mondays 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  staleness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compare skill targets with crates.io
+        run: |
+          bash scripts/staleness.sh | tee staleness.tsv
+
+      - name: Open or update one issue per stale crate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          while IFS=$'\t' read -r crate target newest status; do
+            [ "$status" = stale ] || continue
+            title="Staleness: $crate $newest is out (skill targets $target)"
+            body="The \`$crate\` skill targets \`$target\`, and crates.io now has \`$newest\`.
+
+          Next steps (see CONTRIBUTING.md, \"Adding a new minor version\"):
+          - wait until the ecosystem crates support it, then open a spec issue for the upgrade;
+          - add \`references/<new>/\`, a \`migrations/<old>-to-<new>.md\` and a \`checks/\` crate;
+          - tag the current main as \`$crate-$target\` before the upgrade PR merges.
+
+          _Opened by the weekly staleness workflow._"
+            existing=$(gh issue list --state open --search "\"Staleness: $crate \" in:title" --json number,title \
+              --jq ".[] | select(.title | startswith(\"Staleness: $crate \")) | .number" | head -n 1)
+            if [ -n "$existing" ]; then
+              gh issue edit "$existing" --title "$title" --body "$body"
+              echo "updated #$existing: $title"
+            else
+              gh issue create --title "$title" --body "$body"
+              echo "opened: $title"
+            fi
+          done < staleness.tsv
